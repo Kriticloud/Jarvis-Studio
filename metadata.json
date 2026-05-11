@@ -1,0 +1,9 @@
+{
+  "name": "Jarvis - AI Website Redesign Studio",
+  "description": "An intelligent AI design studio that transforms outdated websites into premium modern UI/UX concepts instantly.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": []
+}
