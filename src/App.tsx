@@ -342,7 +342,14 @@ export default function App() {
             <span className="text-white/30 text-sm font-light">https://</span>
             <span className="text-white font-medium truncate">{url.replace(/^https?:\/\//, '')}</span>
             <div className="ml-auto flex items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 animate-pulse hidden md:block">Processing Active</span>
+              {(data as any)?.isFallback ? (
+                <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                  <AlertCircle size={10} className="text-amber-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500">Simulation Mode</span>
+                </div>
+              ) : (
+                <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 animate-pulse hidden md:block">Processing Active</span>
+              )}
               <div className="w-px h-6 bg-white/10 mx-1" />
               <button 
                 onClick={() => setView('landing')}
@@ -448,24 +455,58 @@ export default function App() {
           {activeTab === 'redesign' && data && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
               <div className="lg:col-span-7 space-y-12">
-                <div className="space-y-6">
-                  <h3 className="text-[10px] font-bold tracking-[0.5em] uppercase text-cyan-400">Design Vision #042</h3>
-                  <h2 className="text-6xl font-light leading-[1.1] tracking-tight">
-                    {data.redesign.heroSection.headline.split(' ').map((word, i) => 
-                      i % 2 === 1 ? <span key={i} className="font-serif italic text-cyan-500"> {word} </span> : word + ' '
-                    )}
-                  </h2>
-                  <p className="text-lg font-light text-white/40 leading-relaxed max-w-xl italic">
+                <div className="space-y-8">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full">
+                    <Sparkles size={10} className="text-cyan-400" />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-400">Visionary Concept #042</span>
+                  </div>
+
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    <h2 className="text-7xl md:text-8xl font-light leading-[0.95] tracking-tighter">
+                      {data.redesign.heroSection.headline.split(' ').map((word, i) => (
+                        <motion.span 
+                          key={i} 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 + (i * 0.1) }}
+                          className={cn(
+                            "inline-block mr-4",
+                            i % 2 === 1 ? "font-serif italic text-cyan-500 font-normal" : "text-white"
+                          )}
+                        >
+                          {word}
+                        </motion.span>
+                      ))}
+                    </h2>
+                  </motion.div>
+
+                  <p className="text-xl font-light text-white/40 leading-relaxed max-w-xl italic border-l-2 border-cyan-500/30 pl-6">
                     "{data.redesign.strategy}"
                   </p>
                   
-                  <div className="flex gap-6 pt-6">
-                    <button className="h-14 px-10 rounded-full bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-cyan-50 transition-all shadow-glow">
+                  <div className="flex flex-wrap items-center gap-8 pt-6">
+                    <motion.button 
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(34, 211, 238, 0.4)" }}
+                      whileTap={{ scale: 0.98 }}
+                      className="h-16 px-12 rounded-2xl bg-white text-black text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-3 transition-all shadow-glow"
+                    >
                       {data.redesign.heroSection.cta}
-                    </button>
-                    <button className="h-14 w-14 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-cyan-400 transition-all">
-                      <Zap size={20} className="text-white fill-white" />
-                    </button>
+                      <ArrowRight size={16} />
+                    </motion.button>
+                    
+                    <div className="flex items-center gap-4">
+                      <button className="h-16 w-16 rounded-2xl border border-white/10 flex items-center justify-center text-white hover:border-cyan-400 hover:bg-cyan-400/5 transition-all group">
+                        <Zap size={20} className="text-white/40 group-hover:text-cyan-400 group-hover:fill-cyan-400 transition-all" />
+                      </button>
+                      <div>
+                        <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">Conversion Edge</p>
+                        <p className="text-xs text-white/30 truncate max-w-[150px]">Direct path-to-action optimization</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
