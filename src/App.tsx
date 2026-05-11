@@ -70,6 +70,32 @@ interface AnalysisData {
   };
 }
 
+// --- Helpers ---
+const getContrastRatio = (hex1: string, hex2: string) => {
+  const getRGB = (hex: string) => {
+    let cleanHex = hex.replace('#', '');
+    if (cleanHex.length === 3) cleanHex = cleanHex.split('').map(c => c + c).join('');
+    if (!/^[0-9A-Fa-f]{6}$/.test(cleanHex)) return [0, 0, 0];
+    return [
+      parseInt(cleanHex.substring(0, 2), 16),
+      parseInt(cleanHex.substring(2, 4), 16),
+      parseInt(cleanHex.substring(4, 6), 16)
+    ];
+  };
+
+  const getLuminance = (rgb: number[]) => {
+    const a = rgb.map(v => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+  };
+
+  const l1 = getLuminance(getRGB(hex1));
+  const l2 = getLuminance(getRGB(hex2));
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+};
+
 // --- Components ---
 
 const GlassCard = ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
@@ -453,26 +479,40 @@ export default function App() {
           )}
 
           {activeTab === 'redesign' && data && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-12"
+            >
               <div className="lg:col-span-7 space-y-12">
-                <div className="space-y-8">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 15 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                  }}
+                  className="space-y-8"
+                >
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full">
                     <Sparkles size={10} className="text-cyan-400" />
                     <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-400">Visionary Concept #042</span>
                   </div>
 
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  >
+                  <div className="overflow-hidden">
                     <h2 className="text-7xl md:text-8xl font-light leading-[0.95] tracking-tighter">
                       {data.redesign.heroSection.headline.split(' ').map((word, i) => (
                         <motion.span 
                           key={i} 
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 + (i * 0.1) }}
+                          variants={{
+                            hidden: { opacity: 0, y: 50 },
+                            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 } }
+                          }}
                           className={cn(
                             "inline-block mr-4",
                             i % 2 === 1 ? "font-serif italic text-cyan-500 font-normal" : "text-white"
@@ -482,13 +522,25 @@ export default function App() {
                         </motion.span>
                       ))}
                     </h2>
-                  </motion.div>
+                  </div>
 
-                  <p className="text-xl font-light text-white/40 leading-relaxed max-w-xl italic border-l-2 border-cyan-500/30 pl-6">
+                  <motion.p 
+                    variants={{
+                      hidden: { opacity: 0, x: -10 },
+                      visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+                    }}
+                    className="text-xl font-light text-white/40 leading-relaxed max-w-xl italic border-l-2 border-cyan-500/30 pl-6"
+                  >
                     "{data.redesign.strategy}"
-                  </p>
+                  </motion.p>
                   
-                  <div className="flex flex-wrap items-center gap-8 pt-6">
+                  <motion.div 
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                    }}
+                    className="flex flex-wrap items-center gap-8 pt-6"
+                  >
                     <motion.button 
                       whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(34, 211, 238, 0.4)" }}
                       whileTap={{ scale: 0.98 }}
@@ -507,10 +559,16 @@ export default function App() {
                         <p className="text-xs text-white/30 truncate max-w-[150px]">Direct path-to-action optimization</p>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.98 },
+                    visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } }
+                  }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
                    <GlassCard className="bg-white/5 border-white/10">
                       <div className="text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold mb-4">Hero Structure</div>
                       <p className="text-sm font-medium text-white/80 leading-relaxed">
@@ -523,13 +581,26 @@ export default function App() {
                         {data.redesign.heroSection.visualConcept}
                       </p>
                    </GlassCard>
-                </div>
+                </motion.div>
 
-                <div className="space-y-4">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                  }}
+                  className="space-y-4"
+                >
                   <h3 className="text-[10px] font-bold tracking-[0.5em] uppercase text-white/30 mb-6">Component Architecture</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {data.redesign.sections.map((section, i) => (
-                      <div key={i} className="flex items-center gap-5 p-5 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 transition-all group">
+                      <motion.div 
+                        key={i}
+                        variants={{
+                          hidden: { opacity: 0, x: -10 },
+                          visible: { opacity: 1, x: 0, transition: { delay: 0.8 + (i * 0.1) } }
+                        }}
+                        className="flex items-center gap-5 p-5 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/20 transition-all group"
+                      >
                         <div className="w-14 h-14 rounded-2xl glass-darker flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
                           {i === 0 ? <Layout size={20} /> : i === 1 ? <Layers size={20} /> : i === 2 ? <Search size={20} /> : <Zap size={20} />}
                         </div>
@@ -538,13 +609,19 @@ export default function App() {
                           <p className="font-semibold text-white/90">{section.name}</p>
                         </div>
                         <ChevronRight size={14} className="ml-auto text-white/10 group-hover:text-white transition-all" />
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
-              <div className="lg:col-span-5 space-y-8">
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, scale: 0.95 },
+                  visible: { opacity: 1, scale: 1, transition: { duration: 1, delay: 0.2 } }
+                }}
+                className="lg:col-span-5 space-y-8"
+              >
                 <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl group">
                   {visualMockup ? (
                     <>
@@ -572,7 +649,7 @@ export default function App() {
                   {/* Grid Overlay */}
                   <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
 
@@ -600,13 +677,41 @@ export default function App() {
                       { label: 'Secondary', color: data.redesign.colorPalette.secondary },
                       { label: 'Accent', color: data.redesign.colorPalette.accent },
                       { label: 'Neutral', color: data.redesign.colorPalette.neutral }
-                    ].map((c, i) => (
-                      <div key={i} className="group cursor-pointer">
-                        <div className="w-full h-24 rounded-[1.5rem] border border-white/10 mb-4 transition-transform group-hover:scale-105" style={{ backgroundColor: c.color.startsWith('#') || c.color.startsWith('rgb') ? c.color : '#fff' }} />
-                        <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">{c.label}</p>
-                        <p className="text-xs font-bold text-white uppercase">{c.color}</p>
-                      </div>
-                    ))}
+                    ].map((c, i) => {
+                      const contrast = getContrastRatio(c.color, data.redesign.colorPalette.neutral);
+                      const isPassing = contrast >= 4.5;
+                      
+                      return (
+                        <div key={i} className="group cursor-pointer">
+                          <div className="w-full h-24 rounded-[1.5rem] border border-white/10 mb-4 transition-transform group-hover:scale-105 relative overflow-hidden" 
+                            style={{ backgroundColor: c.color.startsWith('#') || c.color.startsWith('rgb') ? c.color : '#fff' }}
+                          >
+                             {c.label !== 'Neutral' && (
+                               <div className={cn(
+                                 "absolute top-3 right-3 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider backdrop-blur-md border",
+                                 isPassing ? "bg-green-500/10 border-green-500/20 text-green-400" : "bg-red-500/10 border-red-500/20 text-red-400"
+                               )}>
+                                 {isPassing ? 'WCAG AA' : 'Low Contrast'}
+                               </div>
+                             )}
+                          </div>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">{c.label}</p>
+                              <p className="text-xs font-bold text-white uppercase">{c.color}</p>
+                            </div>
+                            {c.label !== 'Neutral' && (
+                              <div className="text-right">
+                                <p className="text-[8px] font-bold text-white/30 uppercase tracking-tighter mb-0.5">Ratio</p>
+                                <p className={cn("text-[10px] font-mono font-bold", isPassing ? "text-green-500/60" : "text-red-500/60")}>
+                                  {contrast.toFixed(1)}:1
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="space-y-8">

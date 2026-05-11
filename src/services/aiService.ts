@@ -13,6 +13,10 @@ export async function analyzeWebsiteContent(data: { url: string; title: string; 
   Body Content Sample: 
   ${data.content}
 
+  IMPORTANT: The generated color palette MUST be WCAG AA compliant. 
+  - The primary and secondary colors must have a contrast ratio of at least 4.5:1 against the neutral (background) color.
+  - The neutral color should typically be a deep dark tone (e.g., #020204) for a premium "dark mode" feel.
+
   Please generate a detailed JSON response with the following structure:
   {
     "score": number (0-100, modernity/quality score),
