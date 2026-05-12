@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function analyzeWebsiteContent(data: { url: string; title: string; description: string; content: string }) {
-  const model = "gemini-1.5-flash"; // More stable quota than preview models
+  const model = "gemini-3-flash-preview"; 
 
   const prompt = `Analyze the following website content and provide a comprehensive redesign strategy. 
   URL: ${data.url}
@@ -79,6 +79,11 @@ export async function analyzeWebsiteContent(data: { url: string; title: string; 
       console.warn("Quota exceeded, returning high-quality fallback analysis.");
       return getFallbackAnalysis(data);
     }
+
+    if (error?.message?.includes("404") || error?.message?.includes("NOT_FOUND")) {
+      console.warn("AI Model not found or deprecated, returning fallback analysis.");
+      return getFallbackAnalysis(data);
+    }
     
     throw new Error(error?.message || "Failed to analyze website content");
   }
@@ -134,7 +139,7 @@ function getFallbackAnalysis(data: { url: string; title: string }) {
 export async function generateVisualInspiration(prompt: string) {
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash', // Using 1.5-flash for stability
+      model: 'gemini-2.5-flash-image',
       contents: {
         parts: [
           {
