@@ -714,20 +714,47 @@ export default function App() {
                     })}
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     <div className="p-10 rounded-[2.5rem] glass-darker border-white/10 flex flex-col md:flex-row items-baseline justify-between gap-6">
                       <div>
                         <p className="text-[10px] font-mono text-cyan-400 mb-4 uppercase tracking-[0.4em]">Heading / {data.redesign.typography.headingFont}</p>
-                        <h4 className="text-7xl font-light tracking-tighter">Immersive.</h4>
+                        <h4 className="text-7xl font-light tracking-tighter" style={{ fontFamily: data.redesign.typography.headingFont }}>Immersive.</h4>
                       </div>
-                      <span className="text-sm text-white/20 italic font-serif">Display Weight // 300</span>
+                      <span className="text-sm text-white/20 italic" style={{ fontFamily: data.redesign.typography.headingFont }}>Display Specimen // {data.redesign.typography.headingFont}</span>
                     </div>
                     <div className="p-10 rounded-[2.5rem] glass border-white/5 flex flex-col md:flex-row items-baseline justify-between gap-6">
                       <div>
-                        <p className="text-[10px] font-mono text-cyan-400 mb-4 uppercase tracking-[0.4em]">Accent / Cormorant Garamond</p>
-                        <h4 className="text-4xl font-serif italic text-white/80">Elegance in Quantum.</h4>
+                        <p className="text-[10px] font-mono text-cyan-400 mb-4 uppercase tracking-[0.4em]">Body / {data.redesign.typography.bodyFont}</p>
+                        <h4 className="text-3xl font-light text-white/80 leading-relaxed max-w-lg" style={{ fontFamily: data.redesign.typography.bodyFont }}>
+                          The art of design is not just what it looks like and feels like. Design is how it works.
+                        </h4>
                       </div>
-                      <span className="text-sm text-white/20 italic font-serif">Serif Weight // 400</span>
+                      <div className="flex flex-wrap gap-4 items-baseline" style={{ fontFamily: data.redesign.typography.bodyFont }}>
+                        <span className="text-4xl font-bold">Aa</span>
+                        <span className="text-2xl font-light text-white/40 italic">Cc</span>
+                      </div>
+                    </div>
+
+                    <div className="p-12 rounded-[3rem] bg-white/[0.02] border border-white/5 relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 p-8">
+                        <Layout size={24} className="text-white/10 group-hover:text-cyan-500/20 transition-colors" />
+                      </div>
+                      <h5 className="text-[10px] font-bold tracking-[0.5em] uppercase text-white/20 mb-10">Application Context Example</h5>
+                      
+                      <div className="max-w-2xl space-y-8">
+                        <h2 
+                          className="text-6xl font-light tracking-tighter leading-tight"
+                          style={{ fontFamily: data.redesign.typography.headingFont }}
+                        >
+                          Rethinking the <span className="font-serif italic text-cyan-500">Industry</span> standard.
+                        </h2>
+                        <p 
+                          className="text-xl text-white/40 leading-relaxed font-light"
+                          style={{ fontFamily: data.redesign.typography.bodyFont }}
+                        >
+                          Innovation is the calling card of the future. By refining the core typographic experience, we align the brand with a tier-one audience that values structural clarity and premium aesthetics.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

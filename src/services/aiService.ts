@@ -17,6 +17,10 @@ export async function analyzeWebsiteContent(data: { url: string; title: string; 
   - The primary and secondary colors must have a contrast ratio of at least 4.5:1 against the neutral (background) color.
   - The neutral color should typically be a deep dark tone (e.g., #020204) for a premium "dark mode" feel.
 
+  IMPORTANT: The generated typography MUST MUST ALWAYS choose from these specific high-end Google Fonts that are already pre-loaded:
+  - Headings: "Inter", "Space Grotesk", "Outfit", "Playfair Display", "Cormorant Garamond"
+  - Body: "Inter", "Outfit", "Cormorant Garamond", "JetBrains Mono" (for technical sites)
+
   Please generate a detailed JSON response with the following structure:
   {
     "score": number (0-100, modernity/quality score),
@@ -117,8 +121,8 @@ function getFallbackAnalysis(data: { url: string; title: string }) {
         "rationale": "High-contrast electric blues and deep purples create a futuristic, professional aesthetic."
       },
       "typography": {
-        "headingFont": "Inter Display",
-        "bodyFont": "Inter",
+        "headingFont": "Space Grotesk",
+        "bodyFont": "Outfit",
         "rationale": "Clean geometric sans-serif fonts ensure ultimate readability and modern sophistication."
       },
       "sections": [
